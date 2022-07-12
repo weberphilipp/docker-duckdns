@@ -9,7 +9,23 @@ else
   echo -e "SUBDOMAINS=\"${SUBDOMAINS}\" TOKEN=\"${TOKEN}\"" > /app/duck.conf
 fi
 
+# Check to make sure updates are enabled for IPV4 and/or IPV6
+if [ "$IPV4" = "false" ] && [ "$IPV6" != "true" ]; then
+  echo "Please enable updates for either or both IPv4 and IPv6."
+  exit 1
+fi
+
+# Check if IPv4 should be updated
+# IPv4 updates are enabled by default
+if [ "$IPV4" = "false" ]; then
+  echo -e "IPV4=\"false\"" >> /app/duck.conf
+  echo "IPv4 will not be updated"
+else
+  echo "IPv4 will be updated"
+fi
+
 # Check if IPv6 should be updated
+# IPv6 updates are disabled by default
 if [ "$IPV6" = "true" ]; then
   echo "IPv6 will be updated"
 else
