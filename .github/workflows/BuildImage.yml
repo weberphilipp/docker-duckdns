@@ -12,9 +12,12 @@ jobs:
     steps:
       - uses: actions/checkout@v2.3.3
 
-      - name: Build image
+      - name: Enable multi-arch image builds
         run: |
           docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+
+      - name: Build image
+        run: |
           docker build --no-cache -t ${{ github.sha }}-amd64 .
           docker build --no-cache -t ${{ github.sha }}-arm64v8 -f Dockerfile.aarch64 .
           docker build --no-cache -t ${{ github.sha }}-arm32v7 -f Dockerfile.armhf .
@@ -92,7 +95,7 @@ jobs:
           docker push ${ENDPOINT}:arm32v7-${{ github.sha }}
 
       - name: Create multi-arch manifests for DockerHub
-        if: ${{ github.ref == format('refs/heads/{0}', env.BRANCH) && env.CR_USER && env.CR_PAT && env.ENDPOINT != 'user/endpoint' }}
+        if: ${{ github.ref == format('refs/heads/{0}', env.BRANCH) && env.DOCKERUSER && env.DOCKERPASS && env.ENDPOINT != 'user/endpoint' }}
         run: |
           docker manifest create ${ENDPOINT}:latest --amend ${ENDPOINT}:amd64 --amend ${ENDPOINT}:arm32v7 --amend ${ENDPOINT}:arm64v8
           docker manifest create ${ENDPOINT}:${{ github.sha }} --amend ${ENDPOINT}:amd64 --amend ${ENDPOINT}:arm32v7 --amend ${ENDPOINT}:arm64v8
