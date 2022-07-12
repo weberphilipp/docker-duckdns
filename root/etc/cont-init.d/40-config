@@ -11,9 +11,9 @@ fi
 
 # Check if IPv6 should be updated
 if [ "$IPV6" = "true" ]; then
-  echo -e "IPV6=\"${IPV6}\"" >> /app/duck.conf
   echo "IPv6 will be updated"
 else
+  echo -e "IPV6=\"false\"" >> /app/duck.conf
   echo "IPv6 will not be updated"
 fi
 

@@ -2,7 +2,7 @@
 
 . /app/duck.conf
 IPV4=$(curl -4 -sS --max-time 60 ip.me)
-if [ "$IPV6" = "true" ]; then
+if [ "$IPV6" != "false" ]; then
     IPV6=$(curl -6 -sS --max-time 60 ip.me)
     RESPONSE=$(curl -sS --max-time 60 "https://www.duckdns.org/update?domains=${SUBDOMAINS}&token=${TOKEN}&ip=${IPV4}&ipv6=${IPV6}")
 else
@@ -11,7 +11,7 @@ fi
 if [ "${RESPONSE}" = "OK" ]; then
     echo "Your IP was updated at $(date)"
     echo "IPv4: ${IPV4}"
-    if [ "$IPV6" = "true" ]; then
+    if [ "$IPV6" != "false" ]; then
         echo "IPv6: ${IPV6}"
     fi
 else
