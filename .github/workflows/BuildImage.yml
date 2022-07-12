@@ -35,14 +35,6 @@ jobs:
           docker tag ${{ github.sha }}-arm32v7 ghcr.io/${ENDPOINT}:arm32v7
           docker tag ${{ github.sha }}-arm32v7 ghcr.io/${ENDPOINT}:arm32v7-${{ github.sha }}
 
-      - name: Create multi-arch manifest
-        if: ${{ github.ref == format('refs/heads/{0}', env.BRANCH) && env.ENDPOINT != 'user/endpoint' }}
-        run: |
-          docker manifest create ${ENDPOINT}:latest --amend ${ENDPOINT}:amd64 --amend ${ENDPOINT}:arm32v7 --amend ${ENDPOINT}:arm64v8
-          docker manifest create ${ENDPOINT}:${{ github.sha }} --amend ${ENDPOINT}:amd64 --amend ${ENDPOINT}:arm32v7 --amend ${ENDPOINT}:arm64v8
-          docker manifest create ghcr.io/${ENDPOINT}:latest --amend ghcr.io/${ENDPOINT}:amd64 --amend ghcr.io/${ENDPOINT}:arm32v7 --amend ghcr.io/${ENDPOINT}:arm64v8
-          docker manifest create ghcr.io/${ENDPOINT}:${{ github.sha }} --amend ghcr.io/${ENDPOINT}:amd64 --amend ghcr.io/${ENDPOINT}:arm32v7 --amend ghcr.io/${ENDPOINT}:arm64v8
-
       - name: Credential check
         if: ${{ github.ref == format('refs/heads/{0}', env.BRANCH) && env.ENDPOINT != 'user/endpoint' }}
         run: |
@@ -72,6 +64,12 @@ jobs:
           docker push ghcr.io/${ENDPOINT}:arm32v7
           docker push ghcr.io/${ENDPOINT}:arm32v7-${{ github.sha }}
 
+      - name: Create multi-arch manifests for GitHub Container Registry
+        if: ${{ github.ref == format('refs/heads/{0}', env.BRANCH) && env.CR_USER && env.CR_PAT && env.ENDPOINT != 'user/endpoint' }}
+        run: |
+          docker manifest create ghcr.io/${ENDPOINT}:latest --amend ghcr.io/${ENDPOINT}:amd64 --amend ghcr.io/${ENDPOINT}:arm32v7 --amend ghcr.io/${ENDPOINT}:arm64v8
+          docker manifest create ghcr.io/${ENDPOINT}:${{ github.sha }} --amend ghcr.io/${ENDPOINT}:amd64 --amend ghcr.io/${ENDPOINT}:arm32v7 --amend ghcr.io/${ENDPOINT}:arm64v8
+
       - name: Push manifests to GitHub Container Registry
         if: ${{ github.ref == format('refs/heads/{0}', env.BRANCH) && env.CR_USER && env.CR_PAT && env.ENDPOINT != 'user/endpoint' }}
         run: |
@@ -93,7 +91,13 @@ jobs:
           docker push ${ENDPOINT}:arm32v7
           docker push ${ENDPOINT}:arm32v7-${{ github.sha }}
 
-      - name: Push manifests to GitHub DockerHub
+      - name: Create multi-arch manifests for DockerHub
+        if: ${{ github.ref == format('refs/heads/{0}', env.BRANCH) && env.CR_USER && env.CR_PAT && env.ENDPOINT != 'user/endpoint' }}
+        run: |
+          docker manifest create ${ENDPOINT}:latest --amend ${ENDPOINT}:amd64 --amend ${ENDPOINT}:arm32v7 --amend ${ENDPOINT}:arm64v8
+          docker manifest create ${ENDPOINT}:${{ github.sha }} --amend ${ENDPOINT}:amd64 --amend ${ENDPOINT}:arm32v7 --amend ${ENDPOINT}:arm64v8
+
+      - name: Push manifests to DockerHub
         if: ${{ github.ref == format('refs/heads/{0}', env.BRANCH) && env.DOCKERUSER && env.DOCKERPASS && env.ENDPOINT != 'user/endpoint' }}
         run: |
           docker manifest push ${ENDPOINT}:latest
