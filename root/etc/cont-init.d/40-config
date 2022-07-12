@@ -9,6 +9,14 @@ else
   echo -e "SUBDOMAINS=\"${SUBDOMAINS}\" TOKEN=\"${TOKEN}\"" > /app/duck.conf
 fi
 
+# Check if IPv6 should be updated
+if [ "$IPV6" = "true" ]; then
+  echo -e "IPV6=\"${IPV6}\"" >> /app/duck.conf
+  echo "IPv6 will be updated"
+else
+  echo "IPv6 will not be updated"
+fi
+
 # modify crontab if logging to file
 if [ "$LOG_FILE" = "true" ]; then
   crontab -u abc /defaults/duckcron
