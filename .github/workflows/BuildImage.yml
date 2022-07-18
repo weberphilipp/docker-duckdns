@@ -3,7 +3,7 @@ name: Build Image
 on: [push, pull_request, workflow_dispatch]
 
 env:
-  ENDPOINT: "weberphilipp/duckdns"
+  ENDPOINT: "weberphilipp/docker-duckdns"
   BRANCH: "master"
 
 jobs:
